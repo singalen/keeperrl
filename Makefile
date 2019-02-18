@@ -14,20 +14,24 @@ LD = $(GCC)
 DEBUG_LD=gold
 
 ifndef RELEASE
-CFLAGS += -Werror -Wimplicit-fallthrough -Wno-unused-function
-LDFLAGS += -fuse-ld=$(DEBUG_LD)
+CFLAGS += -Werror -Wno-unused-function
+#CFLAGS += -Werror -Wimplicit-fallthrough -Wno-unused-function
+#LDFLAGS += -fuse-ld=$(DEBUG_LD)
 endif
 
 ifdef OSX
 LDFLAGS += -Wl -L/usr/local/opt/openal-soft/lib
 CFLAGS += -stdlib=libc++ -DOSX -mmacosx-version-min=10.7
-CFLAGS += -I/usr/local/opt/openal-soft/include
+CFLAGS += -I/usr/local/opt/openal-soft/include -I/opt/local/include
+LDFLAGS += -L/opt/local/lib
 else
 LDFLAGS += -Wl,-rpath=$(RPATH)
 endif
 
 ifndef RELEASE
+ifndef OSX
 LDFLAGS += -Wl,--gdb-index
+endif
 endif
 
 ifdef DATA_DIR
@@ -87,7 +91,7 @@ IPATH = -I. -I./extern
 CFLAGS += $(IPATH)
 
 ifdef OSX
-BOOST_LIBS = -lboost_system -lboost_thread -lboost_chrono
+BOOST_LIBS = -lboost_system-mt -lboost_thread-mt -lboost_chrono-mt
 OPENGL_LIBS = -framework OpenGL
 else
 BOOST_LIBS =
